@@ -17,7 +17,7 @@ public class WebAPIUnreal : ModuleRules
 			"EnhancedInput",
 			"HTTP", 
 			"Json", 
-			"JsonUtilites"
+			"JsonUtilities"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
