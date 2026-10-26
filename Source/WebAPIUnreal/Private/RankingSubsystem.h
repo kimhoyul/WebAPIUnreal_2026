@@ -33,7 +33,7 @@ struct FGameResult
 };
 
 // Add / Update / Delete 결과용 델리게이트
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnActionSuccessSignature, bool, bSuccess);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnActionSuccessSignature, bool, bSuccess, FString, Verb);
 // 전체 조회 결과용 델리게이트
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGetRankingSignature, const TArray<FGameResult>&, RankingList);
 // 단일 조회 결과용 델리게이트
@@ -45,9 +45,6 @@ UCLASS()
 class URankingSubsystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
-
-public:
-	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 
 public:
 	// POST = api/ranking
@@ -88,9 +85,6 @@ private:
 	FString BaseUrl = TEXT("http://localhost:9999/api/ranking");
 
 private:
-	// FGameResult 구조체를 Json 문자열로 변환하는 함수
-	FString MakeJsonFromGameResult(const FGameResult& Result);
-
 	// POST 응답 처리
 	void OnAddGameResultResponse(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully);
 
