@@ -38,7 +38,6 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnActionSuccessSignature, bool, bSu
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGetRankingSignature, const TArray<FGameResult>&, RankingList);
 // 단일 조회 결과용 델리게이트
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnGetSingleRankingSignature, bool, bSuccess, const FGameResult&, SingleResult);
-
 /**
  * 
  */
@@ -46,8 +45,32 @@ UCLASS()
 class URankingSubsystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
-	
-public :
+
+public:
+	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
+
+public:
+	// POST = api/ranking
+	UFUNCTION(BlueprintCallable, Category = "Ranking")
+	void AddGameResult(FGameResult NewResult);
+
+	// GET = api/ranking
+	UFUNCTION(BlueprintCallable, Category = "Ranking")
+	void GetGameResults();
+
+	// GET = api/ranking/{TargetId}
+	UFUNCTION(BlueprintCallable, Category = "Ranking")
+	void GetGameResult(int32 TargetId);
+
+	// PUT = api/ranking
+	UFUNCTION(BlueprintCallable, Category = "Ranking")
+	void UpdateGameResult(FGameResult TargetResult);
+
+	// DELETE = api/ranking/{TargetId}
+	UFUNCTION(BlueprintCallable, Category = "Ranking")
+	void DeleteGameResult(int32 TargetId);
+
+public:
 	// Add / Update / Delete 완료 이벤트
 	UPROPERTY(BlueprintAssignable, Category = "Ranking/Event")
 	FOnActionSuccessSignature OnActionCompleted;
@@ -59,4 +82,27 @@ public :
 	// Add / Update / Delete 완료 이벤트
 	UPROPERTY(BlueprintAssignable, Category = "Ranking/Event")
 	FOnGetSingleRankingSignature OnGetSingleRankingCompleted;
+
+private:
+	// ASP.NET Web 서버 주소
+	FString BaseUrl = TEXT("http://localhost:9999/api/ranking");
+
+private:
+	// FGameResult 구조체를 Json 문자열로 변환하는 함수
+	FString MakeJsonFromGameResult(const FGameResult& Result);
+
+	// POST 응답 처리
+	void OnAddGameResultResponse(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully);
+
+	// GET 전체 응답 처리
+	void OnGetGameResultsResponse(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully);
+
+	// GET 단일 응답 처리
+	void OnGetGameResultResponse(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully);
+
+	// PUT 응답 처리
+	void OnUpdateGameResultResponse(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully);
+
+	// DELETE 응답 처리
+	void OnDeleteGameResultResponse(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully);
 };
