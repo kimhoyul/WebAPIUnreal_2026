@@ -41,7 +41,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnGetSingleRankingSignature, bool,
 /**
  * 
  */
-UCLASS()
+UCLASS(BlueprintType)
 class URankingSubsystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
